@@ -4,10 +4,7 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Grammatica Meester | Concrete Woordsoorten</title>
-      <!-- Google Fonts -->
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-      <!-- Canvas Confetti -->
-      <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
       <style>
           :root {
               --primary: #6366f1;
@@ -16,22 +13,19 @@
               --success: #10b981;
               --error: #ef4444;
               --bg: #f8fafc;
-              --card: #ffffff;
               --text-main: #1e293b;
               --text-muted: #64748b;
               --radius: 16px;
-              --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+              --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
           }
 
           * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
           body {
               font-family: 'Inter', sans-serif;
-              background-color: var(--bg);
+              background-color: #0f172a;
               background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%),
-                                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%),
                                 radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
-              background-attachment: fixed;
               color: var(--text-main);
               display: flex;
               justify-content: center;
@@ -42,231 +36,79 @@
           }
 
           #quiz-app {
-              background: rgba(255, 255, 255, 0.95);
-              backdrop-filter: blur(10px);
-              max-width: 700px;
+              background: rgba(255, 255, 255, 0.98);
+              max-width: 650px;
               width: 100%;
               padding: 40px;
               border-radius: var(--radius);
               box-shadow: var(--shadow);
               position: relative;
-              overflow: hidden;
           }
 
-          /* Progress Bar */
           .progress-container {
               position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 6px;
+              top: 0; left: 0; width: 100%; height: 6px;
               background: #e2e8f0;
+              border-radius: var(--radius) var(--radius) 0 0;
           }
           #progress-bar {
-              height: 100%;
-              width: 0%;
+              height: 100%; width: 0%;
               background: linear-gradient(90deg, var(--primary), var(--success));
-              transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+              transition: width 0.4s ease;
           }
 
-          .header {
-              text-align: center;
-              margin-bottom: 30px;
-          }
-
-          h1 { font-weight: 800; font-size: 1.8rem; margin: 0; color: var(--primary-dark); }
-          .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          h1 { font-weight: 800; color: var(--primary-dark); margin: 0; }
 
           .stats-bar {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 25px;
-              padding: 10px 15px;
-              background: #f1f5f9;
-              border-radius: 12px;
-              font-weight: 600;
-              font-size: 0.9rem;
+              display: flex; justify-content: space-between; align-items: center;
+              margin-bottom: 25px; padding: 12px;
+              background: #f1f5f9; border-radius: 12px; font-weight: 600;
           }
 
-          .streak-badge {
-              background: var(--accent);
-              color: white;
-              padding: 4px 12px;
-              border-radius: 20px;
-              display: flex;
-              align-items: center;
-              gap: 5px;
-          }
-
-          .question-text {
-              font-size: 1.15rem;
-              margin-bottom: 20px;
-              font-weight: 600;
-              line-height: 1.4;
-          }
-
-          /* Sentence Box & Interactive Words */
           .sentence-box {
-              background: white;
-              padding: 25px;
-              border-radius: 12px;
-              border: 2px solid #e2e8f0;
-              line-height: 2.8;
-              font-size: 1.3rem;
+              background: white; padding: 25px; border-radius: 12px;
+              border: 2px solid #e2e8f0; line-height: 2.8; font-size: 1.25rem;
               margin-bottom: 25px;
-              transition: border-color 0.3s;
-          }
-
-          .word-wrapper {
-              display: inline-block;
-              position: relative;
           }
 
           .word {
-              display: inline-block;
-              padding: 0 6px;
-              margin: 0 2px;
-              cursor: pointer;
-              border-radius: 6px;
-              transition: all 0.2s;
-              background: transparent;
+              display: inline-block; padding: 0 6px; margin: 0 2px;
+              cursor: pointer; border-radius: 6px; transition: 0.2s;
           }
+          .word:hover { background: #e0e7ff; color: var(--primary); }
+          .word.selected { background: var(--primary); color: white; }
 
-          .word:hover {
-              background: #e0e7ff;
-              color: var(--primary);
-          }
-
-          .word.selected {
-              background: var(--primary);
-              color: white;
-              transform: translateY(-2px);
-              box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-          }
-
-          /* Multiple Choice */
-          .options-grid {
-              display: flex;
-              flex-direction: column;
-              gap: 12px;
-          }
-
+          .options-grid { display: flex; flex-direction: column; gap: 10px; }
           .option-btn {
-              padding: 16px 20px;
-              text-align: left;
-              background: white;
-              border: 2px solid #e2e8f0;
-              border-radius: 12px;
-              cursor: pointer;
-              font-size: 1.05rem;
-              font-family: inherit;
-              font-weight: 500;
-              transition: all 0.2s;
+              padding: 16px; text-align: left; background: white;
+              border: 2px solid #e2e8f0; border-radius: 12px;
+              cursor: pointer; font-size: 1rem; font-family: inherit;
           }
+          .option-btn:hover { border-color: var(--primary); background: #f8faff; }
+          .option-btn.selected { border-color: var(--primary); background: #e0e7ff; }
 
-          .option-btn:hover {
-              border-color: var(--primary);
-              background: #f8faff;
-          }
-
-          .option-btn.selected {
-              border-color: var(--primary);
-              background: #e0e7ff;
-              color: var(--primary-dark);
-          }
-
-          /* Feedback Area */
           .feedback {
-              margin-top: 20px;
-              padding: 18px;
-              border-radius: 12px;
-              display: none;
-              animation: slideIn 0.3s ease-out;
-              font-size: 0.95rem;
+              margin-top: 20px; padding: 15px; border-radius: 12px;
+              display: none; font-size: 0.95rem; line-height: 1.4;
           }
-
-          @keyframes slideIn {
-              from { opacity: 0; transform: translateY(10px); }
-              to { opacity: 1; transform: translateY(0); }
-          }
-
-          .feedback.correct {
-              display: block;
-              background: #ecfdf5;
-              color: #065f46;
-              border-left: 5px solid var(--success);
-          }
-
-          .feedback.wrong {
-              display: block;
-              background: #fef2f2;
-              color: #991b1b;
-              border-left: 5px solid var(--error);
-          }
-
-          /* Buttons */
-          .controls {
-              margin-top: 30px;
-              display: flex;
-              gap: 15px;
-          }
+          .feedback.correct { background: #ecfdf5; color: #065f46; border-left: 5px solid var(--success); }
+          .feedback.wrong { background: #fef2f2; color: #991b1b; border-left: 5px solid var(--error); }
 
           .main-btn {
-              flex: 1;
-              background: var(--primary);
-              color: white;
-              border: none;
-              padding: 16px;
-              border-radius: 12px;
-              cursor: pointer;
-              font-size: 1.1rem;
-              font-weight: 700;
-              transition: all 0.3s;
+              width: 100%; background: var(--primary); color: white;
+              border: none; padding: 18px; border-radius: 12px;
+              cursor: pointer; font-size: 1.1rem; font-weight: 700;
               box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
           }
+          .main-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
 
-          .main-btn:hover:not(:disabled) {
-              background: var(--primary-dark);
-              transform: translateY(-2px);
-              box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-          }
-
-          .main-btn:active { transform: translateY(0); }
-          .main-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
-
-          /* Result Screen */
-          .result-card { text-align: center; }
           .grade-circle {
-              width: 150px;
-              height: 150px;
-              margin: 30px auto;
-              border-radius: 50%;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
-              background: white;
-              border: 8px solid var(--primary);
-              box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+              width: 120px; height: 120px; margin: 20px auto;
+              border-radius: 50%; border: 6px solid var(--primary);
+              display: flex; flex-direction: column; justify-content: center; align-items: center;
           }
-          .grade-val { font-size: 3.5rem; font-weight: 800; color: var(--primary-dark); line-height: 1; }
-          .grade-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
-
-          /* Start Screen */
-          .feature-list {
-              text-align: left;
-              background: #f8fafc;
-              padding: 20px;
-              border-radius: 12px;
-              margin: 20px 0;
-          }
-          .feature-item {
-              display: flex;
-              align-items: center;
-              gap: 10px;
-              margin-bottom: 10px;
-          }
+          .grade-val { font-size: 2.5rem; font-weight: 800; }
       </style>
   </head>
   <body>
@@ -274,57 +116,43 @@
   <div id="quiz-app">
       <div class="progress-container"><div id="progress-bar"></div></div>
 
-      <!-- Start Screen -->
+      <!-- Start -->
       <div id="start-screen">
           <div class="header">
               <h1>Grammatica Meester</h1>
-              <p class="subtitle">VWO 1 Niveau • Concrete Woordsoorten</p>
+              <p>VWO 1 • Concrete Woordsoorten</p>
           </div>
-
-          <p>Ben je klaar om je kennis te testen van lidwoorden, zelfstandige naamwoorden en bijvoeglijke
-  naamwoorden?</p>
-
-          <div class="feature-list">
-              <div class="feature-item">✅ <b>Lidwoorden (lw):</b> de, het, een.</div>
-              <div class="feature-item">✅ <b>Zelfst. nw (zn):</b> Dingen, mensen, plaatsen.</div>
-              <div class="feature-item">✅ <b>Bijv. nw (bn):</b> Kenmerken van dingen.</div>
-          </div>
-
-          <button class="main-btn" onclick="app.start()">Start Quiz</button>
+          <p>Test je kennis van <b>lidwoorden</b>, <b>zelfstandige naamwoorden</b> en <b>bijvoeglijke
+  naamwoorden</b>.</p>
+          <button class="main-btn" onclick="startQuiz()">Start de Quiz</button>
       </div>
 
-      <!-- Quiz Screen -->
+      <!-- Quiz -->
       <div id="quiz-screen" style="display:none;">
           <div class="stats-bar">
               <span>Vraag <span id="q-num">1</span>/20</span>
-              <div class="streak-badge">🔥 <span id="streak">0</span></div>
-              <span>Score: <span id="score">0</span></span>
+              <span id="score-text">Score: 0</span>
           </div>
-
-          <div id="content">
-              <p class="question-text" id="instruction"></p>
-              <div id="interactive-container"></div>
-              <div id="feedback-box" class="feedback"></div>
-          </div>
-
-          <div class="controls">
-              <button id="action-btn" class="main-btn" onclick="app.check()">Controleren</button>
-          </div>
+          <p id="instruction" style="font-weight:600; margin-bottom:15px;"></p>
+          <div id="interactive-container"></div>
+          <div id="feedback-box" class="feedback"></div>
+          <button id="action-btn" class="main-btn" onclick="checkAnswer()" style="margin-top:20px;">Controleren</button>
       </div>
 
-      <!-- Result Screen -->
-      <div id="result-screen" style="display:none;" class="result-card">
-          <h1>Toets Afgerond!</h1>
+      <!-- Result -->
+      <div id="result-screen" style="display:none; text-align:center;">
+          <h1>Klaar!</h1>
           <div class="grade-circle">
-              <span class="grade-label">Cijfer</span>
+              <span style="font-size:0.7rem; color:var(--text-muted)">CIJFER</span>
               <span class="grade-val" id="final-grade">0.0</span>
           </div>
           <p id="stats-summary"></p>
-          <p class="subtitle" id="performance-msg"></p>
-          <button class="main-btn" onclick="location.reload()" style="margin-top:20px;">Opnieuw Spelen</button>
+          <button class="main-btn" onclick="location.reload()">Opnieuw</button>
       </div>
   </div>
 
+  <!-- Scripts onderaan voor betere werking -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
       const questions = [
           { type: "identify", instruction: "Klik op de drie <b>ZELFSTANDIGE NAAMWOORDEN</b>:", sentence: "De jonge
@@ -387,81 +215,54 @@
   "koffer", "het", "perron"], why: "Lidw: een, de, het. Bijv. nw: sterke, zware. Zelfst. nw: man, koffer, perron." }
       ];
 
-      class QuizApp {
-          constructor() {
-              this.currentQ = 0;
-              this.score = 0;
-              this.streak = 0;
-              this.userSelections = [];
-              this.mcSelection = null;
-              this.isAnswered = false;
-          }
+      let state = {
+          current: 0,
+          score: 0,
+          userPicks: [],
+          mcPick: null,
+          answered: false
+      };
 
-          start() {
-              document.getElementById('start-screen').style.display = 'none';
-              document.getElementById('quiz-screen').style.display = 'block';
-              this.showQuestion();
-          }
+      function startQuiz() {
+          document.getElementById('start-screen').style.display = 'none';
+          document.getElementById('quiz-screen').style.display = 'block';
+          showQuestion();
+      }
 
-          showQuestion() {
-              this.isAnswered = false;
-              const q = questions[this.currentQ];
+      function showQuestion() {
+          state.answered = false;
+          state.userPicks = [];
+          state.mcPick = null;
 
-              // UI Updates
-              document.getElementById('q-num').innerText = this.currentQ + 1;
-              document.getElementById('instruction').innerHTML = q.instruction;
-              document.getElementById('feedback-box').style.display = 'none';
-              document.getElementById('progress-bar').style.width = `${(this.currentQ / questions.length) * 100}%`;
+          const q = questions[state.current];
+          document.getElementById('q-num').innerText = state.current + 1;
+          document.getElementById('instruction').innerHTML = q.instruction;
+          document.getElementById('feedback-box').style.display = 'none';
+          document.getElementById('action-btn').innerText = "Controleren";
+          document.getElementById('progress-bar').style.width = (state.current / questions.length * 100) + "%";
 
-              const btn = document.getElementById('action-btn');
-              btn.innerText = "Controleren";
-              btn.disabled = false;
+          const container = document.getElementById('interactive-container');
+          container.innerHTML = '';
 
-              const container = document.getElementById('interactive-container');
-              container.innerHTML = '';
-              this.userSelections = [];
-              this.mcSelection = null;
-
-              if (q.type === 'identify') {
-                  this.renderIdentify(q, container);
-              } else {
-                  this.renderMC(q, container);
-              }
-          }
-
-          renderIdentify(q, container) {
+          if (q.type === 'identify') {
               const box = document.createElement('div');
               box.className = 'sentence-box';
-
-              // Improved word splitting logic (handles punctuation separately)
-              const words = q.sentence.split(' ');
-              words.forEach((wordStr, index) => {
-                  const wrapper = document.createElement('span');
-                  wrapper.className = 'word-wrapper';
-
-                  // Extract clean word and punctuation
-                  const cleanWord = wordStr.replace(/[.,!?;:]/g, "");
-                  const punctuation = wordStr.replace(/[a-zA-Záéíóú0-9]/g, "");
-
+              q.sentence.split(' ').forEach(word => {
+                  const clean = word.replace(/[.,!?;:]/g, "");
                   const span = document.createElement('span');
                   span.className = 'word';
-                  span.innerText = cleanWord;
-                  span.onclick = () => this.toggleWord(span, cleanWord);
-
-                  wrapper.appendChild(span);
-                  if (punctuation) {
-                      const puncSpan = document.createTextNode(punctuation + " ");
-                      wrapper.appendChild(puncSpan);
-                  } else {
-                      wrapper.appendChild(document.createTextNode(" "));
-                  }
-
-                  box.appendChild(wrapper);
+                  span.innerText = word;
+                  span.onclick = () => {
+                      if (state.answered) return;
+                      span.classList.toggle('selected');
+                      if (span.classList.contains('selected')) state.userPicks.push(clean);
+                      else state.userPicks = state.userPicks.filter(w => w !== clean);
+                  };
+                  box.appendChild(span);
+                  box.appendChild(document.createTextNode(' '));
               });
               container.appendChild(box);
-          }
-
-          renderMC(q, container) {
+          } else {
               const grid = document.createElement('div');
               grid.className = 'options-grid';
               q.options.forEach(opt => {
@@ -469,108 +270,70 @@
                   btn.className = 'option-btn';
                   btn.innerText = opt;
                   btn.onclick = () => {
-                      if (this.isAnswered) return;
+                      if (state.answered) return;
                       document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
                       btn.classList.add('selected');
-                      this.mcSelection = opt;
+                      state.mcPick = opt;
                   };
                   grid.appendChild(btn);
               });
               container.appendChild(grid);
           }
-
-          toggleWord(el, word) {
-              if (this.isAnswered) return;
-              if (el.classList.contains('selected')) {
-                  el.classList.remove('selected');
-                  this.userSelections = this.userSelections.filter(w => w !== word);
-              } else {
-                  el.classList.add('selected');
-                  this.userSelections.push(word);
-              }
-          }
-
-          check() {
-              if (this.isAnswered) {
-                  this.next();
-                  return;
-              }
-
-              const q = questions[this.currentQ];
-              let isCorrect = false;
-
-              if (q.type === 'identify') {
-                  const lowerAnswers = q.answers.map(a => a.toLowerCase());
-                  const lowerUser = this.userSelections.map(u => u.toLowerCase());
-                  isCorrect = lowerAnswers.length === lowerUser.length &&
-                              lowerAnswers.every(a => lowerUser.includes(a));
-              } else {
-                  isCorrect = this.mcSelection === q.correct;
-              }
-
-              this.showFeedback(isCorrect, q.why);
-              this.isAnswered = true;
-
-              const btn = document.getElementById('action-btn');
-              btn.innerText = (this.currentQ < questions.length - 1) ? "Volgende" : "Bekijk Resultaat";
-          }
-
-          showFeedback(isCorrect, explanation) {
-              const fb = document.getElementById('feedback-box');
-              fb.style.display = 'block';
-
-              if (isCorrect) {
-                  this.score++;
-                  this.streak++;
-                  fb.className = 'feedback correct';
-                  fb.innerHTML = `<b>Lekker bezig!</b> ✨<br>${explanation}`;
-              } else {
-                  this.streak = 0;
-                  fb.className = 'feedback wrong';
-                  fb.innerHTML = `<b>Niet helemaal...</b> 💡<br>${explanation}`;
-              }
-
-              document.getElementById('score').innerText = this.score;
-              document.getElementById('streak').innerText = this.streak;
-          }
-
-          next() {
-              this.currentQ++;
-              if (this.currentQ < questions.length) {
-                  this.showQuestion();
-              } else {
-                  this.finish();
-              }
-          }
-
-          finish() {
-              document.getElementById('quiz-screen').style.display = 'none';
-              document.getElementById('result-screen').style.display = 'block';
-              document.getElementById('progress-bar').style.width = '100%';
-
-              const grade = (this.score / questions.length * 9 + 1).toFixed(1);
-              document.getElementById('final-grade').innerText = grade;
-              document.getElementById('stats-summary').innerText = `Je scoorde ${this.score} van de ${questions.length}
-  punten.`;
-
-              let msg = "";
-              if (grade >= 8) { msg = "Uitmuntend! Je bent een echte grammatica-meester. 🏆"; this.celebrate(); }
-              else if (grade >= 6) { msg = "Ruim voldoende! Goed gedaan. 👍"; }
-              else { msg = "Blijf oefenen, je komt er wel! 💪"; }
-              document.getElementById('performance-msg').innerText = msg;
-          }
-
-          celebrate() {
-              confetti({
-                  particleCount: 150,
-                  spread: 70,
-                  origin: { y: 0.6 },
-                  colors: ['#6366f1', '#10b981', '#f59e0b']
-              });
-          }
       }
 
-      const app = new QuizApp();
+      function checkAnswer() {
+          if (state.answered) {
+              nextQuestion();
+              return;
+          }
+
+          const q = questions[state.current];
+          let correct = false;
+
+          if (q.type === 'identify') {
+              const answers = q.answers.map(a => a.toLowerCase());
+              const user = state.userPicks.map(u => u.toLowerCase());
+              correct = answers.length === user.length && answers.every(a => user.includes(a));
+          } else {
+              correct = state.mcPick === q.correct;
+          }
+
+          const fb = document.getElementById('feedback-box');
+          fb.style.display = 'block';
+          if (correct) {
+              state.score++;
+              fb.className = 'feedback correct';
+              fb.innerHTML = "<b>Goed gedaan!</b><br>" + q.why;
+          } else {
+              fb.className = 'feedback wrong';
+              fb.innerHTML = "<b>Helaas...</b><br>" + q.why;
+          }
+
+          document.getElementById('score-text').innerText = "Score: " + state.score;
+          state.answered = true;
+          document.getElementById('action-btn').innerText = (state.current < questions.length - 1) ? "Volgende vraag" :
+  "Eindresultaat";
+      }
+
+      function nextQuestion() {
+          state.current++;
+          if (state.current < questions.length) showQuestion();
+          else showFinal();
+      }
+
+      function showFinal() {
+          document.getElementById('quiz-screen').style.display = 'none';
+          document.getElementById('result-screen').style.display = 'block';
+          document.getElementById('progress-bar').style.width = "100%";
+
+          const grade = (state.score / questions.length * 9 + 1).toFixed(1);
+          document.getElementById('final-grade').innerText = grade;
+          document.getElementById('stats-summary').innerText = `Je had ${state.score} van de 20 vragen goed.`;
+
+          if (grade >= 7.5 && typeof confetti === 'function') {
+              confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+          }
+      }
   </script>
   </body>
   </html>
