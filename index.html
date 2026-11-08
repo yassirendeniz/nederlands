@@ -1,438 +1,495 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nederlands Grammatica Quiz - Concrete Woordsoorten</title>
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --accent: #e67e22;
-            --success: #27ae60;
-            --error: #e74c3c;
-            --bg: #f4f7f6;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--primary);
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            margin: 0;
-        }
-        #quiz-app {
-            background: white;
-            max-width: 800px;
-            width: 100%;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-        .question-text {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        .sentence-box {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px dashed #ddd;
-            line-height: 2.5;
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-        }
-        .word {
-            display: inline-block;
-            padding: 2px 8px;
-            margin: 2px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-        .word:hover {
-            background: #fff3e0;
-            border-color: var(--accent);
-        }
-        .word.selected {
-            background: var(--accent);
-            color: white;
-        }
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-        .option-btn {
-            padding: 15px;
-            text-align: left;
-            background: white;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: 0.2s;
-        }
-        .option-btn:hover {
-            border-color: var(--accent);
-            background: #fffaf0;
-        }
-        .feedback {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 10px;
-            display: none;
-            line-height: 1.5;
-        }
-        .feedback.correct {
-            display: block;
-            background: #d4edda;
-            color: #155724;
-            border-left: 5px solid var(--success);
-        }
-        .feedback.wrong {
-            display: block;
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 5px solid var(--error);
-        }
-        .controls {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-        }
-        button.main-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        button.main-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        #result-screen {
-            text-align: center;
-        }
-        .grade {
-            font-size: 5rem;
-            color: var(--accent);
-            margin: 20px 0;
-            font-weight: 800;
-        }
-    </style>
-</head>
-<body>
+  <!DOCTYPE html>
+  <html lang="nl">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Grammatica Meester - Concrete Woordsoorten</title>
+      <!-- Modern font -->
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+      <style>
+          :root {
+              --primary: #6366f1;
+              --primary-dark: #4f46e5;
+              --accent: #f59e0b;
+              --success: #10b981;
+              --error: #ef4444;
+              --bg: #f8fafc;
+              --text: #1e293b;
+              --card: #ffffff;
+              --radius: 16px;
+          }
 
-<div id="quiz-app">
-    <div id="start-screen">
-        <div class="header">
-            <h1>Nederlands Quiz (Concrete Grammatica)</h1>
-            <p>VWO 1 Niveau - Zonder Abstracte Begrippen</p>
-        </div>
-        <p>In deze quiz test je je kennis van de volgende woordsoorten:</p>
-        <ul style="line-height: 1.8;">
-            <li><strong>Lidwoorden (lw)</strong>: de, het, een.</li>
-            <li><strong>Zelfstandige naamwoorden (zn)</strong>: Tastbare dingen, mensen en plaatsen.</li>
-            <li><strong>Bijvoeglijke naamwoorden (bn)</strong>: Woorden die iets zeggen over een tastbaar ding.</li>
-        </ul>
-        <div class="controls">
-            <button class="main-btn" onclick="startQuiz()">Start de Quiz</button>
-        </div>
-    </div>
+          * {
+              box-sizing: border-box;
+              -webkit-tap-highlight-color: transparent;
+          }
 
-    <div id="quiz-screen" style="display:none;">
-        <div class="stats">
-            <span>Vraag <span id="q-num">1</span> van 20</span>
-            <span>Score: <span id="score-display">0</span></span>
-        </div>
-        <div id="content">
-            <p class="question-text" id="instruction"></p>
-            <div id="interactive-container"></div>
-            <div id="feedback-box" class="feedback"></div>
-        </div>
-        <div class="controls">
-            <button id="action-btn" class="main-btn" onclick="check()">Controleren</button>
-        </div>
-    </div>
+          body {
+              font-family: 'Inter', sans-serif;
+              background-color: var(--bg);
+              background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%),
+                                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%);
+              background-attachment: fixed;
+              color: var(--text);
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              min-height: 100vh;
+              margin: 0;
+              padding: 20px;
+          }
 
-    <div id="result-screen" style="display:none;">
-        <h1>Eindresultaat</h1>
-        <p>Je cijfer voor deze toets is:</p>
-        <div class="grade" id="final-grade">0.0</div>
-        <p id="stats-summary"></p>
-        <button class="main-btn" onclick="location.reload()">Opnieuw proberen</button>
-    </div>
-</div>
+          #quiz-app {
+              background: var(--card);
+              max-width: 700px;
+              width: 100%;
+              padding: 40px;
+              border-radius: 24px;
+              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+              position: relative;
+              overflow: hidden;
+              animation: fadeIn 0.5s ease-out;
+          }
 
-<script>
-    const questions = [
-        {
-            type: "identify",
-            instruction: "Klik op de drie ZELFSTANDIGE NAAMWOORDEN:",
-            sentence: "De jonge voetballer trapte de bal over het witte hek.",
-            answers: ["voetballer", "bal", "hek"],
-            why: "Voetballer, bal en hek zijn tastbare dingen en personen."
-        },
-        {
-            type: "identify",
-            instruction: "Klik op alle BIJVOEGLIJKE NAAMWOORDEN:",
-            sentence: "In de grote rugzak zaten twee zware, dikke boeken.",
-            answers: ["grote", "zware", "dikke"],
-            why: "Grote, zware en dikke geven extra informatie over de rugzak en de boeken."
-        },
-        {
-            type: "identify",
-            instruction: "Klik op alle LIDWOORDEN:",
-            sentence: "Het kind kocht een ijsje bij de kraam op het plein.",
-            answers: ["Het", "een", "de", "het"],
-            why: "Lidwoorden: het, een, de en nogmaals het."
-        },
-        {
-            type: "mc",
-            instruction: "Welk woord is een stoffelijk bijvoeglijk naamwoord?",
-            options: ["Mooi", "Houten", "Groot", "Zacht"],
-            correct: "Houten",
-            why: "Houten zegt van welke stof iets gemaakt is (hout)."
-        },
-        {
-            type: "identify",
-            instruction: "Klik op de twee STOFFELIJKE bijvoeglijke naamwoorden:",
-            sentence: "Op de glazen tafel stond een zilveren schaal.",
-            answers: ["glazen", "zilveren"],
-            why: "Glazen en zilveren vertellen van welk materiaal de tafel en de schaal zijn gemaakt."
-        },
-        {
-            type: "identify",
-            instruction: "Klik op de ZELFSTANDIGE NAAMWOORDEN:",
-            sentence: "De meester schreef met een rood krijtje op het bord.",
-            answers: ["meester", "krijtje", "bord"],
-            why: "Dit zijn drie tastbare zaken: een persoon en twee voorwerpen."
-        },
-        {
-            type: "mc",
-            instruction: "Is 'het' in deze zin een lidwoord? <br><i>'Ik zag het meisje gisteren.'</i>",
-            options: ["Ja, het is een lidwoord bij 'meisje'.", "Nee, het is een voornaamwoord.", "Ja, het is een bijvoeglijk naamwoord."],
-            correct: "Ja, het is een lidwoord bij 'meisje'.",
-            why: "Hier staat 'het' direct voor het zelfstandig naamwoord 'meisje'."
-        },
-        {
-            type: "identify",
-            instruction: "Wijs alle BIJVOEGLIJKE NAAMWOORDEN aan:",
-            sentence: "De metalen deur bleef de hele middag gesloten.",
-            answers: ["metalen", "hele"],
-            why: "Metalen (stof) en hele zeggen iets over de deur en de middag."
-        },
-        {
-            type: "mc",
-            instruction: "Wat is 'de blinde' in de zin: 'De blinde liep met een stok'?",
-            options: ["Een gewoon bijvoeglijk naamwoord.", "Een zelfstandig gebruikt bijvoeglijk naamwoord.", "Een lidwoord."],
-            correct: "Een zelfstandig gebruikt bijvoeglijk naamwoord.",
-            why: "Blinde is normaal een eigenschap, maar hier wordt het als persoon (zelfstandig) gebruikt."
-        },
-        {
-            type: "identify",
-            instruction: "Klik op de drie LIDWOORDEN:",
-            sentence: "De leerling opende een raam in het lokaal.",
-            answers: ["De", "een", "het"],
-            why: "De, een en het zijn de drie Nederlandse lidwoorden."
-        },
-        {
-            type: "identify",
-            instruction: "Klik op de ZELFSTANDIGE NAAMWOORDEN (inclusief eigennamen):",
-            sentence: "Mijn zusje Emma speelt met haar nieuwe pop in de tuin.",
-            answers: ["zusje", "Emma", "pop", "tuin"],
-            why: "Eigennamen (Emma) zijn ook altijd zelfstandige naamwoorden."
-        },
-        {
-            type: "mc",
-            instruction: "Welk woord is GEEN zelfstandig naamwoord?",
-            options: ["Stoel", "Fietsen", "Computer", "Bord"],
-            correct: "Fietsen",
-            why: "Fietsen is een werkwoord (behalve als je 'de fietsen' bedoelt, maar hier is het de actie)."
-        },
-        {
-            type: "identify",
-            instruction: "Klik op de drie BIJVOEGLIJKE NAAMWOORDEN:",
-            sentence: "Die snelle scooter reed door de smalle straat op een regenachtige dag.",
-            answers: ["snelle", "smalle", "regenachtige"],
-            why: "Deze woorden beschrijven de eigenschappen van de scooter, de straat en de dag."
-        },
-        {
-            type: "mc",
-            instruction: "In 'Het drinken van de melk', wat is het woord 'drinken'?",
-            options: ["Een werkwoord", "Een zelfstandig naamwoord", "Een bijvoeglijk naamwoord"],
-            correct: "Een zelfstandig naamwoord",
-            why: "Door het lidwoord 'het' wordt de actie een ding (het drinken)."
-        },
-        {
-            type: "identify",
-            instruction: "Klik op de LIDWOORDEN en de ZELFST. NAAMWOORDEN:",
-            sentence: "De plastic beker viel van de houten tafel.",
-            answers: ["De", "beker", "de", "tafel"],
-            why: "Lidwoorden: de, de. Zelfst. naamwoorden: beker, tafel. (Plastic en houten zijn bijv. naamwoorden)."
-        },
-        {
-            type: "mc",
-            instruction: "Wat is 'gouden' in de zin: 'De gouden ring glom in de zon'?",
-            options: ["Zelfstandig naamwoord", "Stoffelijk bijvoeglijk naamwoord", "Lidwoord"],
-            correct: "Stoffelijk bijvoeglijk naamwoord",
-            why: "Het zegt waarvan de ring gemaakt is."
-        },
-        {
-            type: "identify",
-            instruction: "Klik op de BIJVOEGLIJKE NAAMWOORDEN:",
-            sentence: "In de donkere kast lag een klein, blauw doosje.",
-            answers: ["donkere", "klein", "blauw"],
-            why: "Deze woorden geven de kleur, grootte en staat van de kast en het doosje aan."
-        },
-        {
-            type: "mc",
-            instruction: "Welk lidwoord hoort bij het woord 'kussen' (het ding op je bed)?",
-            options: ["De", "Het", "Geen van beide"],
-            correct: "Het",
-            why: "Het is 'het kussen'."
-        },
-        {
-            type: "identify",
-            instruction: "Klik op de ZELFSTANDIGE NAAMWOORDEN:",
-            sentence: "De hond haalde de krant uit de brievenbus.",
-            answers: ["hond", "krant", "brievenbus"],
-            why: "Hond, krant en brievenbus zijn alle drie tastbaar."
-        },
-        {
-            type: "identify",
-            instruction: "De laatste vraag! Klik op de LW, de ZN en de BN:",
-            sentence: "Een sterke man tilde de zware koffer op het perron.",
-            answers: ["Een", "sterke", "man", "de", "zware", "koffer", "het", "perron"],
-            why: "Lidw: een, de, het. Bijv. nw: sterke, zware. Zelfst. nw: man, koffer, perron."
-        }
-    ];
+          @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(10px); }
+              to { opacity: 1; transform: translateY(0); }
+          }
 
-    let currentQ = 0;
-    let score = 0;
-    let userSelections = [];
-    let mcSelection = null;
+          /* Voortgangsbalk */
+          .progress-container {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 6px;
+              background: #e2e8f0;
+          }
+          #progress-bar {
+              height: 100%;
+              width: 0%;
+              background: linear-gradient(90deg, var(--primary), var(--success));
+              transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          }
 
-    function startQuiz() {
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('quiz-screen').style.display = 'block';
-        showQuestion();
-    }
+          .header h1 {
+              font-size: 1.8rem;
+              font-weight: 800;
+              margin: 0;
+              background: linear-gradient(to right, var(--primary), var(--primary-dark));
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+          }
 
-    function showQuestion() {
-        const q = questions[currentQ];
-        document.getElementById('q-num').innerText = currentQ + 1;
-        document.getElementById('instruction').innerHTML = q.instruction;
-        document.getElementById('feedback-box').style.display = 'none';
-        document.getElementById('action-btn').innerText = "Controleren";
-        document.getElementById('action-btn').onclick = check;
+          .header p {
+              color: #64748b;
+              margin: 10px 0 30px 0;
+              font-size: 0.95rem;
+          }
 
-        const container = document.getElementById('interactive-container');
-        container.innerHTML = '';
-        userSelections = [];
-        mcSelection = null;
+          .stats {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 25px;
+              padding: 12px 20px;
+              background: #f1f5f9;
+              border-radius: 12px;
+              font-weight: 600;
+              font-size: 0.9rem;
+              color: #475569;
+          }
 
-        if (q.type === 'identify') {
-            const box = document.createElement('div');
-            box.className = 'sentence-box';
-            q.sentence.split(' ').forEach(wordStr => {
-                const span = document.createElement('span');
-                span.className = 'word';
-                span.innerText = wordStr;
-                span.onclick = () => {
-                    const clean = wordStr.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-                    if (span.classList.contains('selected')) {
-                        span.classList.remove('selected');
-                        userSelections = userSelections.filter(w => w !== clean);
-                    } else {
-                        span.classList.add('selected');
-                        userSelections.push(clean);
-                    }
-                };
-                box.appendChild(span);
-            });
-            container.appendChild(box);
-        } else {
-            const grid = document.createElement('div');
-            grid.className = 'options-grid';
-            q.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    document.querySelectorAll('.option-btn').forEach(b => b.style.borderColor = '#eee');
-                    btn.style.borderColor = 'var(--accent)';
-                    mcSelection = opt;
-                };
-                grid.appendChild(btn);
-            });
-            container.appendChild(grid);
-        }
-    }
+          .question-text {
+              font-size: 1.15rem;
+              margin-bottom: 20px;
+              font-weight: 700;
+              line-height: 1.4;
+          }
 
-    function check() {
-        const q = questions[currentQ];
-        let correct = false;
+          .sentence-box {
+              background: #ffffff;
+              padding: 25px;
+              border-radius: var(--radius);
+              border: 2px solid #e2e8f0;
+              line-height: 2.8;
+              font-size: 1.3rem;
+              margin-bottom: 25px;
+              transition: border-color 0.3s;
+          }
 
-        if (q.type === 'identify') {
-            const lowerAnswers = q.answers.map(a => a.toLowerCase());
-            const lowerUser = userSelections.map(u => u.toLowerCase());
-            correct = lowerAnswers.length === lowerUser.length && lowerAnswers.every(a => lowerUser.includes(a));
-        } else {
-            correct = mcSelection === q.correct;
-        }
+          .word {
+              display: inline-block;
+              padding: 0 8px;
+              margin: 0 2px;
+              cursor: pointer;
+              border-radius: 8px;
+              transition: all 0.2s;
+              background: transparent;
+              border: 1px solid transparent;
+          }
 
-        const fb = document.getElementById('feedback-box');
-        if (correct) {
-            score++;
-            fb.className = 'feedback correct';
-            fb.innerHTML = "<strong>Goed!</strong><br>" + q.why;
-        } else {
-            fb.className = 'feedback wrong';
-            fb.innerHTML = "<strong>Niet goed...</strong><br>" + q.why;
-        }
-        fb.style.display = 'block';
-        document.getElementById('score-display').innerText = score;
+          .word:hover {
+              background: #e0e7ff;
+              color: var(--primary);
+          }
 
-        const btn = document.getElementById('action-btn');
-        btn.innerText = (currentQ < questions.length - 1) ? "Volgende vraag" : "Resultaat";
-        btn.onclick = next;
-    }
+          .word.selected {
+              background: var(--primary);
+              color: white;
+              box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+              transform: translateY(-2px);
+          }
 
-    function next() {
-        currentQ++;
-        if (currentQ < questions.length) showQuestion();
-        else showResults();
-    }
+          .options-grid {
+              display: grid;
+              gap: 12px;
+          }
 
-    function showResults() {
-        document.getElementById('quiz-screen').style.display = 'none';
-        document.getElementById('result-screen').style.display = 'block';
-        const grade = (score / questions.length * 9 + 1).toFixed(1);
-        document.getElementById('final-grade').innerText = grade;
-        document.getElementById('stats-summary').innerText = `Je had ${score} van de 20 vragen goed!`;
-    }
-</script>
-</body>
-</html>
+          .option-btn {
+              padding: 16px 20px;
+              text-align: left;
+              background: white;
+              border: 2px solid #e2e8f0;
+              border-radius: 12px;
+              cursor: pointer;
+              font-size: 1.05rem;
+              font-family: inherit;
+              font-weight: 500;
+              transition: all 0.2s;
+          }
+
+          .option-btn:hover {
+              border-color: var(--primary);
+              background: #f8faff;
+              transform: translateX(5px);
+          }
+
+          .feedback {
+              margin-top: 20px;
+              padding: 20px;
+              border-radius: 12px;
+              display: none;
+              animation: slideIn 0.3s ease-out;
+              line-height: 1.5;
+          }
+
+          @keyframes slideIn {
+              from { opacity: 0; transform: translateY(10px); }
+              to { opacity: 1; transform: translateY(0); }
+          }
+
+          .feedback.correct {
+              display: block;
+              background: #ecfdf5;
+              color: #065f46;
+              border-left: 6px solid var(--success);
+          }
+
+          .feedback.wrong {
+              display: block;
+              background: #fef2f2;
+              color: #991b1b;
+              border-left: 6px solid var(--error);
+          }
+
+          .controls {
+              margin-top: 30px;
+          }
+
+          button.main-btn {
+              background: var(--primary);
+              color: white;
+              border: none;
+              padding: 16px 32px;
+              border-radius: 12px;
+              cursor: pointer;
+              font-size: 1.1rem;
+              font-weight: 700;
+              width: 100%;
+              transition: all 0.3s;
+              box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+          }
+
+          button.main-btn:hover {
+              background: var(--primary-dark);
+              transform: translateY(-2px);
+              box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4);
+          }
+
+          /* Result Screen */
+          .grade-container {
+              margin: 30px 0;
+              position: relative;
+              display: inline-block;
+          }
+
+          .grade {
+              font-size: 4.5rem;
+              color: var(--primary);
+              font-weight: 900;
+              margin: 0;
+              line-height: 1;
+          }
+
+          .grade-label {
+              font-size: 0.9rem;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+              color: #64748b;
+              font-weight: 700;
+          }
+
+          ul.feature-list {
+              text-align: left;
+              list-style: none;
+              padding: 0;
+              margin: 20px 0;
+          }
+
+          ul.feature-list li {
+              padding: 10px 0;
+              display: flex;
+              align-items: center;
+              gap: 10px;
+          }
+
+          ul.feature-list li::before {
+              content: "✓";
+              color: var(--success);
+              font-weight: bold;
+          }
+      </style>
+  </head>
+  <body>
+
+  <div id="quiz-app">
+      <div class="progress-container"><div id="progress-bar"></div></div>
+
+      <div id="start-screen">
+          <div class="header">
+              <h1>Grammatica Meester</h1>
+              <p>VWO 1 Niveau • Concrete Woordsoorten</p>
+          </div>
+          <p>In deze quiz test je je kennis van de volgende woordsoorten:</p>
+          <ul class="feature-list">
+              <li><strong>Lidwoorden (lw)</strong>: de, het, een.</li>
+              <li><strong>Zelfstandige naamwoorden (zn)</strong>: Tastbare zaken.</li>
+              <li><strong>Bijvoeglijke naamwoorden (bn)</strong>: Eigenschappen.</li>
+          </ul>
+          <div class="controls">
+              <button class="main-btn" onclick="startQuiz()">Start de Quiz</button>
+          </div>
+      </div>
+
+      <div id="quiz-screen" style="display:none;">
+          <div class="stats">
+              <span>Vraag <span id="q-num">1</span> van 20</span>
+              <span>Score: <span id="score-display">0</span></span>
+          </div>
+          <div id="content">
+              <p class="question-text" id="instruction"></p>
+              <div id="interactive-container"></div>
+              <div id="feedback-box" class="feedback"></div>
+          </div>
+          <div class="controls">
+              <button id="action-btn" class="main-btn" onclick="check()">Controleren</button>
+          </div>
+      </div>
+
+      <div id="result-screen" style="display:none; text-align: center;">
+          <div class="header">
+              <h1>Resultaat</h1>
+              <p>Je hebt de toets afgerond!</p>
+          </div>
+          <div class="grade-container">
+              <div class="grade-label">Cijfer</div>
+              <div class="grade" id="final-grade">0.0</div>
+          </div>
+          <p id="stats-summary" style="font-size: 1.1rem; font-weight: 600;"></p>
+          <div class="controls">
+              <button class="main-btn" onclick="location.reload()">Opnieuw proberen</button>
+          </div>
+      </div>
+  </div>
+
+  <script>
+      const questions = [
+          { type: "identify", instruction: "Klik op de drie <strong>ZELFSTANDIGE NAAMWOORDEN</strong>:", sentence: "De
+  jonge voetballer trapte de bal over het witte hek.", answers: ["voetballer", "bal", "hek"], why: "Voetballer, bal en
+  hek zijn tastbare dingen en personen." },
+          { type: "identify", instruction: "Klik op alle <strong>BIJVOEGLIJKE NAAMWOORDEN</strong>:", sentence: "In de
+  grote rugzak zaten twee zware, dikke boeken.", answers: ["grote", "zware", "dikke"], why: "Grote, zware en dikke geven
+  extra informatie over de rugzak en de boeken." },
+          { type: "identify", instruction: "Klik op alle <strong>LIDWOORDEN</strong>:", sentence: "Het kind kocht een
+  ijsje bij de kraam op het plein.", answers: ["Het", "een", "de", "het"], why: "Lidwoorden: het, een, de en nogmaals
+  het." },
+          { type: "mc", instruction: "Welk woord is een <strong>stoffelijk</strong> bijvoeglijk naamwoord?", options:
+  ["Mooi", "Houten", "Groot", "Zacht"], correct: "Houten", why: "Houten zegt van welke stof iets gemaakt is (hout)." },
+          { type: "identify", instruction: "Klik op de twee <strong>STOFFELIJKE</strong> bijvoeglijke naamwoorden:",
+  sentence: "Op de glazen tafel stond een zilveren schaal.", answers: ["glazen", "zilveren"], why: "Glazen en zilveren
+  vertellen van welk materiaal de tafel en de schaal zijn gemaakt." },
+          { type: "identify", instruction: "Klik op de <strong>ZELFSTANDIGE NAAMWOORDEN</strong>:", sentence: "De
+  meester schreef met een rood krijtje op het bord.", answers: ["meester", "krijtje", "bord"], why: "Dit zijn drie
+  tastbare zaken: een persoon en twee voorwerpen." },
+          { type: "mc", instruction: "Is 'het' in deze zin een lidwoord? <br><i>'Ik zag het meisje gisteren.'</i>",
+  options: ["Ja, het is een lidwoord bij 'meisje'.", "Nee, het is een voornaamwoord.", "Ja, het is een bijvoeglijk
+  naamwoord."], correct: "Ja, het is een lidwoord bij 'meisje'.", why: "Hier staat 'het' direct voor het zelfstandig
+  naamwoord 'meisje'." },
+          { type: "identify", instruction: "Wijs alle <strong>BIJVOEGLIJKE NAAMWOORDEN</strong> aan:", sentence: "De
+  metalen deur bleef de hele middag gesloten.", answers: ["metalen", "hele"], why: "Metalen (stof) en hele zeggen iets
+  over de deur en de middag." },
+          { type: "mc", instruction: "Wat is 'de blinde' in de zin: 'De blinde liep met een stok'?", options: ["Een
+  gewoon bijvoeglijk naamwoord.", "Een zelfstandig gebruikt bijvoeglijk naamwoord.", "Een lidwoord."], correct: "Een
+  zelfstandig gebruikt bijvoeglijk naamwoord.", why: "Blinde is normaal een eigenschap, maar hier wordt het als persoon
+  (zelfstandig) gebruikt." },
+          { type: "identify", instruction: "Klik op de drie <strong>LIDWOORDEN</strong>:", sentence: "De leerling opende
+  een raam in het lokaal.", answers: ["De", "een", "het"], why: "De, een en het zijn de drie Nederlandse lidwoorden."
+  },
+          { type: "identify", instruction: "Klik op de <strong>ZELFSTANDIGE NAAMWOORDEN</strong> (inclusief
+  eigennamen):", sentence: "Mijn zusje Emma speelt met haar nieuwe pop in de tuin.", answers: ["zusje", "Emma", "pop",
+  "tuin"], why: "Eigennamen (Emma) zijn ook altijd zelfstandige naamwoorden." },
+          { type: "mc", instruction: "Welk woord is <strong>GEEN</strong> zelfstandig naamwoord?", options: ["Stoel",
+  "Fietsen", "Computer", "Bord"], correct: "Fietsen", why: "Fietsen is een werkwoord (behalve als je 'de fietsen'
+  bedoelt, maar hier is het de actie)." },
+          { type: "identify", instruction: "Klik op de drie <strong>BIJVOEGLIJKE NAAMWOORDEN</strong>:", sentence: "Die
+  snelle scooter reed door de smalle straat op een regenachtige dag.", answers: ["snelle", "smalle", "regenachtige"],
+  why: "Deze woorden beschrijven de eigenschappen van de scooter, de straat en de dag." },
+          { type: "mc", instruction: "In 'Het drinken van de melk', wat is het woord <strong>'drinken'</strong>?",
+  options: ["Een werkwoord", "Een zelfstandig naamwoord", "Een bijvoeglijk naamwoord"], correct: "Een zelfstandig
+  naamwoord", why: "Door het lidwoord 'het' wordt de actie een ding (het drinken)." },
+          { type: "identify", instruction: "Klik op de <strong>LIDWOORDEN</strong> en de <strong>ZELFST.
+  NAAMWOORDEN</strong>:", sentence: "De plastic beker viel van de houten tafel.", answers: ["De", "beker", "de",
+  "tafel"], why: "Lidwoorden: de, de. Zelfst. naamwoorden: beker, tafel. (Plastic en houten zijn bijv. naamwoorden)." },
+          { type: "mc", instruction: "Wat is 'gouden' in de zin: 'De gouden ring glom in de zon'?", options:
+  ["Zelfstandig naamwoord", "Stoffelijk bijvoeglijk naamwoord", "Lidwoord"], correct: "Stoffelijk bijvoeglijk
+  naamwoord", why: "Het zegt waarvan de ring gemaakt is." },
+          { type: "identify", instruction: "Klik op de <strong>BIJVOEGLIJKE NAAMWOORDEN</strong>:", sentence: "In de
+  donkere kast lag een klein, blauw doosje.", answers: ["donkere", "klein", "blauw"], why: "Deze woorden geven de kleur,
+  grootte en staat van de kast en het doosje aan." },
+          { type: "mc", instruction: "Welk lidwoord hoort bij het woord <strong>'kussen'</strong> (het ding op je
+  bed)?", options: ["De", "Het", "Geen van beide"], correct: "Het", why: "Het is 'het kussen'." },
+          { type: "identify", instruction: "Klik op de <strong>ZELFSTANDIGE NAAMWOORDEN</strong>:", sentence: "De hond
+  haalde de krant uit de brievenbus.", answers: ["hond", "krant", "brievenbus"], why: "Hond, krant en brievenbus zijn
+  alle drie tastbaar." },
+          { type: "identify", instruction: "De laatste vraag! Klik op de <strong>LW</strong>, de <strong>ZN</strong> en
+  de <strong>BN</strong>:", sentence: "Een sterke man tilde de zware koffer op het perron.", answers: ["Een", "sterke",
+  "man", "de", "zware", "koffer", "het", "perron"], why: "Lidw: een, de, het. Bijv. nw: sterke, zware. Zelfst. nw: man,
+  koffer, perron." }
+      ];
+
+      let currentQ = 0;
+      let score = 0;
+      let userSelections = [];
+      let mcSelection = null;
+
+      function startQuiz() {
+          document.getElementById('start-screen').style.display = 'none';
+          document.getElementById('quiz-screen').style.display = 'block';
+          showQuestion();
+      }
+
+      function showQuestion() {
+          const q = questions[currentQ];
+          document.getElementById('q-num').innerText = currentQ + 1;
+          document.getElementById('instruction').innerHTML = q.instruction;
+          document.getElementById('feedback-box').style.display = 'none';
+          document.getElementById('action-btn').innerText = "Controleren";
+          document.getElementById('action-btn').onclick = check;
+
+          // Update Progress Bar
+          document.getElementById('progress-bar').style.width = (currentQ / questions.length * 100) + "%";
+
+          const container = document.getElementById('interactive-container');
+          container.innerHTML = '';
+          userSelections = [];
+          mcSelection = null;
+
+          if (q.type === 'identify') {
+              const box = document.createElement('div');
+              box.className = 'sentence-box';
+              q.sentence.split(' ').forEach(wordStr => {
+                  const span = document.createElement('span');
+                  span.className = 'word';
+                  span.innerText = wordStr;
+                  span.onclick = () => {
+                      const clean = wordStr.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                      if (span.classList.contains('selected')) {
+                          span.classList.remove('selected');
+                          userSelections = userSelections.filter(w => w !== clean);
+                      } else {
+                          span.classList.add('selected');
+                          userSelections.push(clean);
+                      }
+                  };
+                  box.appendChild(span);
+              });
+              container.appendChild(box);
+          } else {
+              const grid = document.createElement('div');
+              grid.className = 'options-grid';
+              q.options.forEach(opt => {
+                  const btn = document.createElement('button');
+                  btn.className = 'option-btn';
+                  btn.innerText = opt;
+                  btn.onclick = () => {
+                      document.querySelectorAll('.option-btn').forEach(b => {
+                          b.style.borderColor = '#e2e8f0';
+                          b.style.background = 'white';
+                      });
+                      btn.style.borderColor = 'var(--primary)';
+                      btn.style.background = '#f0f4ff';
+                      mcSelection = opt;
+                  };
+                  grid.appendChild(btn);
+              });
+              container.appendChild(grid);
+          }
+      }
+
+      function check() {
+          const q = questions[currentQ];
+          let correct = false;
+
+          if (q.type === 'identify') {
+              const lowerAnswers = q.answers.map(a => a.toLowerCase());
+              const lowerUser = userSelections.map(u => u.toLowerCase());
+              correct = lowerAnswers.length === lowerUser.length && lowerAnswers.every(a => lowerUser.includes(a));
+          } else {
+              correct = mcSelection === q.correct;
+          }
+
+          const fb = document.getElementById('feedback-box');
+          if (correct) {
+              score++;
+              fb.className = 'feedback correct';
+              fb.innerHTML = "<strong>Goed gedaan!</strong> ✨<br>" + q.why;
+          } else {
+              fb.className = 'feedback wrong';
+              fb.innerHTML = "<strong>Nog even oefenen...</strong> 💡<br>" + q.why;
+          }
+          fb.style.display = 'block';
+          document.getElementById('score-display').innerText = score;
+
+          const btn = document.getElementById('action-btn');
+          btn.innerText = (currentQ < questions.length - 1) ? "Volgende vraag" : "Bekijk Resultaat";
+          btn.onclick = next;
+      }
+
+      function next() {
+          currentQ++;
+          if (currentQ < questions.length) showQuestion();
+          else showResults();
+      }
+
+      function showResults() {
+          document.getElementById('quiz-screen').style.display = 'none';
+          document.getElementById('result-screen').style.display = 'block';
+          document.getElementById('progress-bar').style.width = "100%";
+          const grade = (score / questions.length * 9 + 1).toFixed(1);
+          document.getElementById('final-grade').innerText = grade;
+          document.getElementById('stats-summary').innerText = `Je had ${score} van de 20 vragen goed!`;
+      }
+  </script>
+  </body>
+  </html>
