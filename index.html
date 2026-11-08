@@ -1,160 +1,145 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
   <html lang="nl">
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Grammatica Meester | Concrete Woordsoorten</title>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+      <title>Nederlands Quiz</title>
       <style>
-          :root {
-              --primary: #6366f1;
-              --primary-dark: #4f46e5;
-              --accent: #f59e0b;
-              --success: #10b981;
-              --error: #ef4444;
-              --bg: #f8fafc;
-              --text-main: #1e293b;
-              --text-muted: #64748b;
-              --radius: 16px;
-              --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-          }
-
-          * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
+          /* Alles in één bestand voor maximale betrouwbaarheid */
           body {
-              font-family: 'Inter', sans-serif;
-              background-color: #0f172a;
-              background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%),
-                                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
-              color: var(--text-main);
+              font-family: sans-serif;
+              background-color: #f0f2f5;
               display: flex;
               justify-content: center;
               align-items: center;
               min-height: 100vh;
               margin: 0;
-              padding: 20px;
           }
 
           #quiz-app {
-              background: rgba(255, 255, 255, 0.98);
-              max-width: 650px;
+              background: white;
+              max-width: 600px;
+              width: 90%;
+              padding: 30px;
+              border-radius: 12px;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+              text-align: center;
+          }
+
+          .main-btn {
+              background-color: #4f46e5;
+              color: white;
+              border: none;
+              padding: 15px 30px;
+              font-size: 1.1rem;
+              font-weight: bold;
+              border-radius: 8px;
+              cursor: pointer;
               width: 100%;
-              padding: 40px;
-              border-radius: var(--radius);
-              box-shadow: var(--shadow);
-              position: relative;
+              margin-top: 20px;
           }
 
-          .progress-container {
-              position: absolute;
-              top: 0; left: 0; width: 100%; height: 6px;
-              background: #e2e8f0;
-              border-radius: var(--radius) var(--radius) 0 0;
-          }
-          #progress-bar {
-              height: 100%; width: 0%;
-              background: linear-gradient(90deg, var(--primary), var(--success));
-              transition: width 0.4s ease;
+          .main-btn:hover { background-color: #4338ca; }
+
+          .word {
+              display: inline-block;
+              padding: 5px 8px;
+              margin: 2px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              cursor: pointer;
+              background: #fff;
           }
 
-          .header { text-align: center; margin-bottom: 30px; }
-          h1 { font-weight: 800; color: var(--primary-dark); margin: 0; }
+          .word.selected {
+              background-color: #4f46e5;
+              color: white;
+              border-color: #4f46e5;
+          }
 
-          .stats-bar {
-              display: flex; justify-content: space-between; align-items: center;
-              margin-bottom: 25px; padding: 12px;
-              background: #f1f5f9; border-radius: 12px; font-weight: 600;
+          .feedback {
+              margin-top: 15px;
+              padding: 15px;
+              border-radius: 8px;
+              display: none;
+              text-align: left;
+          }
+
+          .correct { background-color: #dcfce7; color: #166534; }
+          .wrong { background-color: #fee2e2; color: #991b1b; }
+
+          .stats {
+              display: flex;
+              justify-content: space-between;
+              background: #f8fafc;
+              padding: 10px;
+              margin-bottom: 20px;
+              border-radius: 6px;
+              font-weight: bold;
           }
 
           .sentence-box {
-              background: white; padding: 25px; border-radius: 12px;
-              border: 2px solid #e2e8f0; line-height: 2.8; font-size: 1.25rem;
-              margin-bottom: 25px;
+              padding: 20px;
+              border: 2px dashed #ccc;
+              border-radius: 8px;
+              line-height: 2.5;
+              font-size: 1.2rem;
+              text-align: left;
           }
 
-          .word {
-              display: inline-block; padding: 0 6px; margin: 0 2px;
-              cursor: pointer; border-radius: 6px; transition: 0.2s;
-          }
-          .word:hover { background: #e0e7ff; color: var(--primary); }
-          .word.selected { background: var(--primary); color: white; }
-
-          .options-grid { display: flex; flex-direction: column; gap: 10px; }
           .option-btn {
-              padding: 16px; text-align: left; background: white;
-              border: 2px solid #e2e8f0; border-radius: 12px;
-              cursor: pointer; font-size: 1rem; font-family: inherit;
+              display: block;
+              width: 100%;
+              padding: 12px;
+              margin: 8px 0;
+              text-align: left;
+              border: 1px solid #ddd;
+              border-radius: 8px;
+              cursor: pointer;
+              background: white;
           }
-          .option-btn:hover { border-color: var(--primary); background: #f8faff; }
-          .option-btn.selected { border-color: var(--primary); background: #e0e7ff; }
 
-          .feedback {
-              margin-top: 20px; padding: 15px; border-radius: 12px;
-              display: none; font-size: 0.95rem; line-height: 1.4;
+          .option-btn.selected {
+              border-color: #4f46e5;
+              background-color: #eef2ff;
           }
-          .feedback.correct { background: #ecfdf5; color: #065f46; border-left: 5px solid var(--success); }
-          .feedback.wrong { background: #fef2f2; color: #991b1b; border-left: 5px solid var(--error); }
-
-          .main-btn {
-              width: 100%; background: var(--primary); color: white;
-              border: none; padding: 18px; border-radius: 12px;
-              cursor: pointer; font-size: 1.1rem; font-weight: 700;
-              box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
-          }
-          .main-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
-
-          .grade-circle {
-              width: 120px; height: 120px; margin: 20px auto;
-              border-radius: 50%; border: 6px solid var(--primary);
-              display: flex; flex-direction: column; justify-content: center; align-items: center;
-          }
-          .grade-val { font-size: 2.5rem; font-weight: 800; }
       </style>
   </head>
   <body>
 
   <div id="quiz-app">
-      <div class="progress-container"><div id="progress-bar"></div></div>
-
-      <!-- Start -->
+      <!-- START SCHERM -->
       <div id="start-screen">
-          <div class="header">
-              <h1>Grammatica Meester</h1>
-              <p>VWO 1 • Concrete Woordsoorten</p>
-          </div>
-          <p>Test je kennis van <b>lidwoorden</b>, <b>zelfstandige naamwoorden</b> en <b>bijvoeglijke
-  naamwoorden</b>.</p>
-          <button class="main-btn" onclick="startQuiz()">Start de Quiz</button>
+          <h1>Grammatica Toets</h1>
+          <p>Onderwerp: Lidwoorden, Zelfst. Nw en Bijv. Nw</p>
+          <p style="color: #666;">Klik op de knop hieronder om te beginnen.</p>
+          <button class="main-btn" onclick="startDeQuiz()">Start de Quiz</button>
       </div>
 
-      <!-- Quiz -->
+      <!-- QUIZ SCHERM -->
       <div id="quiz-screen" style="display:none;">
-          <div class="stats-bar">
+          <div class="stats">
               <span>Vraag <span id="q-num">1</span>/20</span>
               <span id="score-text">Score: 0</span>
           </div>
-          <p id="instruction" style="font-weight:600; margin-bottom:15px;"></p>
-          <div id="interactive-container"></div>
+          <p id="instruction" style="font-weight:bold; text-align:left;"></p>
+          <div id="content-area"></div>
           <div id="feedback-box" class="feedback"></div>
-          <button id="action-btn" class="main-btn" onclick="checkAnswer()" style="margin-top:20px;">Controleren</button>
+          <button id="action-btn" class="main-btn" onclick="controleerAntwoord()">Controleren</button>
       </div>
 
-      <!-- Result -->
-      <div id="result-screen" style="display:none; text-align:center;">
-          <h1>Klaar!</h1>
-          <div class="grade-circle">
-              <span style="font-size:0.7rem; color:var(--text-muted)">CIJFER</span>
-              <span class="grade-val" id="final-grade">0.0</span>
-          </div>
-          <p id="stats-summary"></p>
-          <button class="main-btn" onclick="location.reload()">Opnieuw</button>
+      <!-- RESULTAAT SCHERM -->
+      <div id="result-screen" style="display:none;">
+          <h1>Resultaat</h1>
+          <div style="font-size: 3rem; font-weight: bold; color: #4f46e5;" id="final-grade">1.0</div>
+          <p id="final-stats"></p>
+          <button class="main-btn" onclick="location.reload()">Opnieuw proberen</button>
       </div>
   </div>
 
-  <!-- Scripts onderaan voor betere werking -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
-      const questions = [
+      // Alle data direct in het script
+      var questions = [
           { type: "identify", instruction: "Klik op de drie <b>ZELFSTANDIGE NAAMWOORDEN</b>:", sentence: "De jonge
   voetballer trapte de bal over het witte hek.", answers: ["voetballer", "bal", "hek"], why: "Voetballer, bal en hek
   zijn tastbare dingen en personen." },
@@ -215,125 +200,128 @@
   "koffer", "het", "perron"], why: "Lidw: een, de, het. Bijv. nw: sterke, zware. Zelfst. nw: man, koffer, perron." }
       ];
 
-      let state = {
-          current: 0,
-          score: 0,
-          userPicks: [],
-          mcPick: null,
-          answered: false
-      };
+      var currentIdx = 0;
+      var score = 0;
+      var userSelections = [];
+      var mcSelection = null;
+      var isAnswered = false;
 
-      function startQuiz() {
+      // DEBUG CHECK
+      console.log("Script is geladen!");
+
+      function startDeQuiz() {
+          console.log("Start knop ingedrukt!");
           document.getElementById('start-screen').style.display = 'none';
           document.getElementById('quiz-screen').style.display = 'block';
-          showQuestion();
+          toonVraag();
       }
 
-      function showQuestion() {
-          state.answered = false;
-          state.userPicks = [];
-          state.mcPick = null;
+      function toonVraag() {
+          isAnswered = false;
+          userSelections = [];
+          mcSelection = null;
 
-          const q = questions[state.current];
-          document.getElementById('q-num').innerText = state.current + 1;
+          var q = questions[currentIdx];
+          document.getElementById('q-num').innerText = currentIdx + 1;
           document.getElementById('instruction').innerHTML = q.instruction;
           document.getElementById('feedback-box').style.display = 'none';
           document.getElementById('action-btn').innerText = "Controleren";
-          document.getElementById('progress-bar').style.width = (state.current / questions.length * 100) + "%";
 
-          const container = document.getElementById('interactive-container');
+          var container = document.getElementById('content-area');
           container.innerHTML = '';
 
           if (q.type === 'identify') {
-              const box = document.createElement('div');
+              var box = document.createElement('div');
               box.className = 'sentence-box';
-              q.sentence.split(' ').forEach(word => {
-                  const clean = word.replace(/[.,!?;:]/g, "");
-                  const span = document.createElement('span');
+              var words = q.sentence.split(' ');
+
+              words.forEach(function(word) {
+                  var clean = word.replace(/[.,!?;:]/g, "");
+                  var span = document.createElement('span');
                   span.className = 'word';
                   span.innerText = word;
-                  span.onclick = () => {
-                      if (state.answered) return;
+                  span.onclick = function() {
+                      if (isAnswered) return;
                       span.classList.toggle('selected');
-                      if (span.classList.contains('selected')) state.userPicks.push(clean);
-                      else state.userPicks = state.userPicks.filter(w => w !== clean);
+                      var idx = userSelections.indexOf(clean);
+                      if (idx > -1) userSelections.splice(idx, 1);
+                      else userSelections.push(clean);
                   };
                   box.appendChild(span);
                   box.appendChild(document.createTextNode(' '));
               });
               container.appendChild(box);
           } else {
-              const grid = document.createElement('div');
-              grid.className = 'options-grid';
-              q.options.forEach(opt => {
-                  const btn = document.createElement('button');
+              q.options.forEach(function(opt) {
+                  var btn = document.createElement('button');
                   btn.className = 'option-btn';
                   btn.innerText = opt;
-                  btn.onclick = () => {
-                      if (state.answered) return;
-                      document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                  btn.onclick = function() {
+                      if (isAnswered) return;
+                      var all = document.getElementsByClassName('option-btn');
+                      for(var i=0; i<all.length; i++) all[i].classList.remove('selected');
                       btn.classList.add('selected');
-                      state.mcPick = opt;
+                      mcSelection = opt;
                   };
-                  grid.appendChild(btn);
+                  container.appendChild(btn);
               });
-              container.appendChild(grid);
           }
       }
 
-      function checkAnswer() {
-          if (state.answered) {
-              nextQuestion();
+      function controleerAntwoord() {
+          if (isAnswered) {
+              volgendeVraag();
               return;
           }
 
-          const q = questions[state.current];
-          let correct = false;
+          var q = questions[currentIdx];
+          var correct = false;
 
           if (q.type === 'identify') {
-              const answers = q.answers.map(a => a.toLowerCase());
-              const user = state.userPicks.map(u => u.toLowerCase());
-              correct = answers.length === user.length && answers.every(a => user.includes(a));
+              var correctAnswers = q.answers.map(function(a){ return a.toLowerCase(); });
+              var userAnswers = userSelections.map(function(u){ return u.toLowerCase(); });
+
+              correct = (correctAnswers.length === userAnswers.length) &&
+                        correctAnswers.every(function(a){ return userAnswers.indexOf(a) > -1; });
           } else {
-              correct = state.mcPick === q.correct;
+              correct = (mcSelection === q.correct);
           }
 
-          const fb = document.getElementById('feedback-box');
+          var fb = document.getElementById('feedback-box');
           fb.style.display = 'block';
           if (correct) {
-              state.score++;
+              score++;
               fb.className = 'feedback correct';
-              fb.innerHTML = "<b>Goed gedaan!</b><br>" + q.why;
+              fb.innerHTML = "<b>Goed!</b><br>" + q.why;
           } else {
               fb.className = 'feedback wrong';
-              fb.innerHTML = "<b>Helaas...</b><br>" + q.why;
+              fb.innerHTML = "<b>Fout...</b><br>" + q.why;
           }
 
-          document.getElementById('score-text').innerText = "Score: " + state.score;
-          state.answered = true;
-          document.getElementById('action-btn').innerText = (state.current < questions.length - 1) ? "Volgende vraag" :
-  "Eindresultaat";
+          document.getElementById('score-text').innerText = "Score: " + score;
+          isAnswered = true;
+          document.getElementById('action-btn').innerText = (currentIdx < questions.length - 1) ? "Volgende" :
+  "Resultaat";
       }
 
-      function nextQuestion() {
-          state.current++;
-          if (state.current < questions.length) showQuestion();
-          else showFinal();
+      function volgendeVraag() {
+          currentIdx++;
+          if (currentIdx < questions.length) {
+              toonVraag();
+          } else {
+              toonResultaat();
+          }
       }
 
-      function showFinal() {
+      function toonResultaat() {
           document.getElementById('quiz-screen').style.display = 'none';
           document.getElementById('result-screen').style.display = 'block';
-          document.getElementById('progress-bar').style.width = "100%";
 
-          const grade = (state.score / questions.length * 9 + 1).toFixed(1);
+          var grade = (score / questions.length * 9 + 1).toFixed(1);
           document.getElementById('final-grade').innerText = grade;
-          document.getElementById('stats-summary').innerText = `Je had ${state.score} van de 20 vragen goed.`;
-
-          if (grade >= 7.5 && typeof confetti === 'function') {
-              confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-          }
+          document.getElementById('final-stats').innerText = "Je had " + score + " van de 20 vragen goed.";
       }
   </script>
+
   </body>
   </html>
